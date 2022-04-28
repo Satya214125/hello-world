@@ -1,27 +1,37 @@
-pipeline {
-    agent any
-
-    stages {
-        stage("Fetch repository") {
-            steps {
-                    git 'https://github.com/chandra635313/javawar.git'
-                }
-            }	
-            stage('Build') { 
-            steps {
-                 sh 'mvn -f pom.xml clean install'
-            }
-			}
-            stage('Test') { 
-            steps {
-                  sh 'mvn -f pom.xml test'
-                  
+pipeline{
+    agent  {label "chandu"}
+    stages{
+        stage("clone code"){
+            steps{
+                git 'https://github.com/sekharreddy0463/hello-world.git'
             }
         }
-		stage("deploy"){
-		stapes{
-		deploy adapters: [tomcat9(credentialsId: 'tomcat_cred', path: '', url: 'http://44.204.128.209:8080/')], contextPath: null, war: '**/*.war'
-		}
-		}
-		}
-		}
+        stage("build"){
+            steps{
+                sh" mvn install"
+            }
+    
+        }
+        stage("test"){
+            steps{
+                sh"mvn test"
+            }
+        }
+        
+        stage("compile"){
+            steps{
+                sh "mvn compile"
+            }
+        }
+        stage("validate"){
+            steps{
+                sh "mvn validate"
+            }
+        }
+        stage("deploy"){
+            steps{
+                deploy adapters: [tomcat9(credentialsId: 'tomcat_cred', path: '', url: 'http://44.204.128.209:8080/')], contextPath: null, war: '**/*.war'
+            }
+        }
+    }
+}
